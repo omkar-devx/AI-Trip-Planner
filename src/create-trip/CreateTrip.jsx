@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SelectBudgetOptions, SelectTravelList } from "@/constants/options";
+import {
+  AI_PROMPT,
+  SelectBudgetOptions,
+  SelectTravelList,
+} from "@/constants/options";
 import React, { useEffect, useState } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { chatSession } from "@/service/AIModel";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState();
@@ -12,11 +19,27 @@ const CreateTrip = () => {
     setFormdata({ ...formdata, [name]: value });
   };
 
-  const OnGenerateTrip = () => {
-    if (formdata?.noOfDays > 5) {
+  const OnGenerateTrip = async () => {
+    if (
+      (formdata?.noOfDays > 5 && !formdata?.location) ||
+      !formdata?.budget ||
+      !formdata?.traveler
+    ) {
+      toast.warning("Please Fill the Details");
       return;
     }
-    console.log(formdata);
+    toast.success("Trip is generating....");
+
+    const FINAL_PROMPT = AI_PROMPT.replace(
+      "{location}",
+      formdata?.location?.label
+    )
+      .replace("{totalDays}", formdata?.noOfDays)
+      .replace("{traveler}", formdata?.traveler)
+      .replace("{budget}", formdata?.budget)
+      .replace("{totalDays}", formdata?.noOfDays);
+    const result = await chatSession.sendMessage(FINAL_PROMPT);
+    console.log(result?.response?.text());
   };
 
   useEffect(() => {
