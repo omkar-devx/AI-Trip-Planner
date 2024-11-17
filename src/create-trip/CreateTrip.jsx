@@ -1,37 +1,41 @@
+import GooglePlacesAutocomplete from "react-google-places-autocomplete";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useGoogleLogin } from "@react-oauth/google";
+import React, { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
+import { chatSession } from "@/service/AIModel";
 import { Input } from "@/components/ui/input";
+import { FcGoogle } from "react-icons/fc";
+import { db } from "@/service/firebase";
+
+import { toast } from "sonner";
+import axios from "axios";
 import {
   AI_PROMPT,
   SelectBudgetOptions,
   SelectTravelList,
 } from "@/constants/options";
-import React, { useEffect, useState } from "react";
-import GooglePlacesAutocomplete from "react-google-places-autocomplete";
-import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
-import { chatSession } from "@/service/AIModel";
-import { FcGoogle } from "react-icons/fc";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState();
   const [formdata, setFormdata] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (name, value) => {
     setFormdata({ ...formdata, [name]: value });
   };
 
   const OnGenerateTrip = async () => {
+    setLoading(true);
     const user = localStorage.getItem("user");
 
     if (!user) {
@@ -59,11 +63,22 @@ const CreateTrip = () => {
       .replace("{totalDays}", formdata?.noOfDays);
     const result = await chatSession.sendMessage(FINAL_PROMPT);
     console.log(result?.response?.text());
+    setLoading(false);
+    saveAItrip(result?.response?.text());
   };
 
-  useEffect(() => {
-    console.log(formdata);
-  }, [formdata]);
+  const saveAItrip = async (TripData) => {
+    setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    const docId = Date.now().toString();
+    await setDoc(doc(db, "AITrips", docId), {
+      userSelection: formdata,
+      tripData: JSON.parse(TripData),
+      userEmail: user?.email,
+      id: docId,
+    });
+    setLoading(false);
+  };
 
   const login = useGoogleLogin({
     onSuccess: (codeResp) => GetUserProfile(codeResp),
@@ -84,6 +99,10 @@ const CreateTrip = () => {
       });
     console.log("end");
   };
+
+  useEffect(() => {
+    console.log(formdata);
+  }, [formdata]);
 
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10 ">
@@ -166,7 +185,13 @@ const CreateTrip = () => {
       </div>
 
       <div className="my-10 justify-end flex">
-        <Button onClick={OnGenerateTrip}>Generate Trip</Button>
+        <Button disabled={loading} onClick={OnGenerateTrip}>
+          {loading ? (
+            <AiOutlineLoading3Quarters className="h-7 w-7 animate-spin" />
+          ) : (
+            "Generate Trip"
+          )}
+        </Button>
       </div>
       <Dialog open={openDialog}>
         <DialogContent>
