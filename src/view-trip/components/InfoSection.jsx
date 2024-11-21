@@ -1,12 +1,31 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
+import { GetPlaceDetails } from "../../service/GlobalApi";
+import React, { useEffect, useState } from "react";
 import { IoIosSend } from "react-icons/io";
+import { PHOTO_REF_URL } from "../../service/GlobalApi";
 
 const InfoSection = ({ trip }) => {
+  const [photoUrl, setPhotoUrl] = useState();
+
+  useEffect(() => {
+    trip && GetPlacePhoto();
+  }, [trip]);
+
+  const GetPlacePhoto = async () => {
+    const query = trip?.userSelection?.location?.label;
+    const result = await GetPlaceDetails(query).then((resp) => {
+      console.log(resp.places[0].photos[3].name);
+      const PhotoUrl = PHOTO_REF_URL.replace(
+        "{NAME}",
+        resp.places[0].photos[3].name
+      );
+      setPhotoUrl(PhotoUrl);
+    });
+  };
   return (
     <div>
       <img
-        src="/banner.jpg"
+        src={photoUrl}
         className="h-[300px] w-full object-cover rounded-xl "
       />
       <div className="my-5 flex-col gap-2">
