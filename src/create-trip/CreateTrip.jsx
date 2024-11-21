@@ -106,6 +106,7 @@ const CreateTrip = () => {
         setOpenDialog(false);
         OnGenerateTrip();
       });
+    // window.location.reload();
     console.log("end");
   };
 

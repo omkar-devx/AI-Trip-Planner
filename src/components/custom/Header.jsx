@@ -1,14 +1,117 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../ui/button";
-import { Link } from "react-router-dom";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { googleLogout } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { FcGoogle } from "react-icons/fc";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 const Header = () => {
+  const users = JSON.parse(localStorage.getItem("user"));
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResp) => GetUserProfile(codeResp),
+    onError: (error) => console.log(error),
+  });
+
+  const GetUserProfile = async (tokenInfo) => {
+    console.log("Hello");
+    axios
+      .get(
+        `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`
+      )
+      .then((resp) => {
+        console.log(resp);
+        localStorage.setItem("user", JSON.stringify(resp.data));
+        setOpenDialog(false);
+      });
+    // window.location.reload();
+    console.log("end");
+  };
+  useEffect(() => {
+    console.log(users);
+  }, [users]);
   return (
     <div className="p-2 shadow-sm flex justify-between items-center px-5">
       <a href="/">
         <img src="/logo.svg" />
       </a>
       <div>
-        <Button> Sign In</Button>
+        {users ? (
+          <div className="flex items-center gap-5">
+            <Button variant="outline" className="rounded-full">
+              <a href="/my-trip">My Trip</a>
+            </Button>
+
+            <Popover>
+              <PopoverTrigger>
+                <img
+                  className="h-[35px] w-[35px] rounded-full"
+                  src={users?.picture}
+                />
+              </PopoverTrigger>
+              <PopoverContent className="w-[10rem] flex justify-center">
+                <Button
+                  onClick={() => {
+                    googleLogout();
+                    localStorage.clear();
+                    // navigate("/");
+                    window.location.reload();
+                  }}
+                >
+                  Logout
+                </Button>
+              </PopoverContent>
+            </Popover>
+          </div>
+        ) : (
+          <div>
+            <Button
+              onClick={() => {
+                setOpenDialog(true);
+              }}
+            >
+              Signin
+            </Button>
+            <Dialog open={openDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>
+                    <img src="/logo.svg" />
+                  </DialogTitle>
+                  <DialogDescription>
+                    <h2 className="font-bold text-black text-lg  mt-7">
+                      Sign In with Google
+                    </h2>
+                    <p className="text-black">
+                      Sign in to the App with Google authentication securely
+                    </p>
+                    <Button
+                      onClick={login}
+                      className="w-full mt-5 flex gap-4 items-center"
+                    >
+                      <FcGoogle className="h-7 w-7" />
+                      Sign In with Google
+                    </Button>
+                  </DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
     </div>
   );
