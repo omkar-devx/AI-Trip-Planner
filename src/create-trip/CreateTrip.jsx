@@ -8,7 +8,6 @@ import { chatSession } from "@/service/AIModel";
 import { Input } from "@/components/ui/input";
 import { FcGoogle } from "react-icons/fc";
 import { db } from "@/service/firebase";
-
 import { toast } from "sonner";
 import axios from "axios";
 import {
@@ -23,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 const CreateTrip = () => {
   const [place, setPlace] = useState();
@@ -30,6 +30,7 @@ const CreateTrip = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   const handleInputChange = (name, value) => {
     setFormdata({ ...formdata, [name]: value });
   };
@@ -51,7 +52,8 @@ const CreateTrip = () => {
       toast.warning("Please Fill the Details");
       return;
     }
-    toast.success("Trip is generating....");
+    toast.success("Trip is generating by AI....");
+    toast.success("It will take few seconds.... ");
 
     const FINAL_PROMPT = AI_PROMPT.replace(
       "{location}",
@@ -61,10 +63,16 @@ const CreateTrip = () => {
       .replace("{traveler}", formdata?.traveler)
       .replace("{budget}", formdata?.budget)
       .replace("{totalDays}", formdata?.noOfDays);
-    const result = await chatSession.sendMessage(FINAL_PROMPT);
-    console.log(result?.response?.text());
-    setLoading(false);
-    saveAItrip(result?.response?.text());
+    try {
+      const result = await chatSession.sendMessage(FINAL_PROMPT);
+      console.log(result?.response?.text());
+      setLoading(false);
+      saveAItrip(result?.response?.text());
+    } catch (error) {
+      console.log(error);
+      toast.error("Error 503: gemini Service is Unavailable");
+      setLoading(false);
+    }
   };
 
   const saveAItrip = async (TripData) => {
@@ -78,6 +86,7 @@ const CreateTrip = () => {
       id: docId,
     });
     setLoading(false);
+    navigate(`/view-trip/${docId}`);
   };
 
   const login = useGoogleLogin({
