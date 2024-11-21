@@ -20,11 +20,11 @@ const TripView = () => {
     const docRef = doc(db, "AITrips", tripId);
     const docSnap = await getDoc(docRef);
     setTrip(docSnap.data());
-    if (docSnap.exists()) {
-      console.log("Document: ", docSnap.data());
-    } else {
-      console.log("No Such Document");
-    }
+    // if (docSnap.exists()) {
+    //   console.log("Document: ", docSnap.data());
+    // } else {
+    //   console.log("No Such Document");
+    // }
   };
 
   return (

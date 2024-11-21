@@ -57,7 +57,7 @@ const Header = () => {
                 + Create Trip
               </Button>
             </a>
-            <a href="/my-trips">
+            <a href="/my-trip">
               <Button variant="outline" className="rounded-full">
                 View Trip
               </Button>

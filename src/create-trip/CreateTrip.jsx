@@ -95,23 +95,21 @@ const CreateTrip = () => {
   });
 
   const GetUserProfile = async (tokenInfo) => {
-    console.log("Hello");
     axios
       .get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`
       )
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         localStorage.setItem("user", JSON.stringify(resp.data));
         setOpenDialog(false);
         OnGenerateTrip();
       });
     // window.location.reload();
-    console.log("end");
   };
 
   useEffect(() => {
-    console.log(formdata);
+    // console.log(formdata);
   }, [formdata]);
 
   return (

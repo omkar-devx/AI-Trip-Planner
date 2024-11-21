@@ -12,7 +12,7 @@ const PlacesToVisit = ({ trip }) => {
             <h2 className="font-bold text-lg">Day {item.day}:</h2>
             <div className="grid grid-cols-2 gap-5">
               {item?.plan?.map((plans, index) => (
-                <div>
+                <div key={index}>
                   <h2 className="font-medium text-sm text-orange-500">
                     {plans.timestamp}
                   </h2>
