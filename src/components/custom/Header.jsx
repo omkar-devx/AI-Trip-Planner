@@ -49,8 +49,9 @@ const Header = () => {
   }, [users]);
   return (
     <div className="p-2 shadow-sm flex justify-between items-center px-5">
-      <a href="/">
-        <img src="/logo.svg" />
+      <a className="flex justify-center items-center text-2xl" href="/">
+        <img className="w-16" src="/trip-planner.jpg" />
+        <h2 className="font-bold">Triply AI</h2>
       </a>
       <div>
         {users ? (
