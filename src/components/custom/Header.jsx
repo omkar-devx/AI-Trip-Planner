@@ -41,6 +41,9 @@ const Header = () => {
     // window.location.reload();
     console.log("end");
   };
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
   useEffect(() => {
     console.log(users);
   }, [users]);
@@ -93,14 +96,14 @@ const Header = () => {
             >
               Signin
             </Button>
-            <Dialog open={openDialog}>
-              <DialogContent>
+            <Dialog open={openDialog} onClose={handleClose}>
+              <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>
-                    <img src="/logo.svg" />
+                    <img src="/logo.svg" alt="App Logo" />
                   </DialogTitle>
                   <DialogDescription>
-                    <h2 className="font-bold text-black text-lg  mt-7">
+                    <h2 className="font-bold text-black text-lg mt-7">
                       Sign In with Google
                     </h2>
                     <p className="text-black">
@@ -112,6 +115,9 @@ const Header = () => {
                     >
                       <FcGoogle className="h-7 w-7" />
                       Sign In with Google
+                    </Button>
+                    <Button onClick={handleClose} className="mx-[10rem] mt-5">
+                      Close
                     </Button>
                   </DialogDescription>
                 </DialogHeader>
