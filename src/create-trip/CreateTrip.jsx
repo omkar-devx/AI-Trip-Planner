@@ -107,7 +107,9 @@ const CreateTrip = () => {
       });
     // window.location.reload();
   };
-
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
   useEffect(() => {
     // console.log(formdata);
   }, [formdata]);
@@ -220,6 +222,9 @@ const CreateTrip = () => {
               >
                 <FcGoogle className="h-7 w-7" />
                 Sign In with Google{" "}
+              </Button>
+              <Button onClick={handleClose} className="mx-[10rem] mt-5">
+                Close
               </Button>
             </DialogDescription>
           </DialogHeader>
