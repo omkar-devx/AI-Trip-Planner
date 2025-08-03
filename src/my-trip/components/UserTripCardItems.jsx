@@ -11,7 +11,7 @@ const UserTripCardItems = ({ trip }) => {
   const GetPlacePhoto = async () => {
     const query = trip?.userSelection?.location?.label;
     const result = await GetPlaceDetails(query).then((resp) => {
-      console.log(resp.places[0].photos[3].name);
+      // console.log(resp.places[0].photos[3].name);
       const PhotoUrl = PHOTO_REF_URL.replace(
         "{NAME}",
         resp.places[0].photos[3].name

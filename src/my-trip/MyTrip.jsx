@@ -13,7 +13,7 @@ const MyTrip = () => {
 
   const getUserTrip = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log(user.email);
+    // console.log(user.email);
     if (!user) {
       navigate("/");
       return;
@@ -22,11 +22,11 @@ const MyTrip = () => {
       collection(db, "AITrips"),
       where("userEmail", "==", user?.email)
     );
-    console.log(q);
+    // console.log(q);
     const querySnapshot = await getDocs(q);
     setUserTrips([]);
     querySnapshot.forEach((doc) => {
-      console.log(doc.id, "=>", doc.data());
+      // console.log(doc.id, "=>", doc.data());
       setUserTrips((prevVal) => [...prevVal, doc.data()]);
     });
   };

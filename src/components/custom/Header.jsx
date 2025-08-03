@@ -19,7 +19,13 @@ import {
 } from "@/components/ui/dialog";
 
 const Header = () => {
-  const users = JSON.parse(localStorage.getItem("user"));
+  let users = null;
+  try {
+    const userStr = localStorage.getItem("user");
+    users = userStr ? JSON.parse(userStr) : null;
+  } catch (e) {
+    users = null;
+  }
   const [openDialog, setOpenDialog] = useState(false);
 
   const login = useGoogleLogin({
@@ -28,25 +34,25 @@ const Header = () => {
   });
 
   const GetUserProfile = async (tokenInfo) => {
-    console.log("Hello");
+    // console.log("Hello");
     axios
       .get(
         `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`
       )
       .then((resp) => {
-        console.log(resp);
+        // console.log(resp);
         localStorage.setItem("user", JSON.stringify(resp.data));
         setOpenDialog(false);
       });
     // window.location.reload();
-    console.log("end");
+    // console.log("end");
   };
   const handleClose = () => {
     setOpenDialog(false);
   };
-  useEffect(() => {
-    console.log(users);
-  }, [users]);
+  // useEffect(() => {
+  //   // console.log(users);
+  // }, [users]);
   return (
     <div className="p-2 shadow-sm flex justify-between items-center px-5">
       <a className="flex justify-center items-center text-2xl" href="/">

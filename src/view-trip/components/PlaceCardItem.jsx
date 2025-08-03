@@ -11,7 +11,7 @@ const PlaceCardItem = ({ plans }) => {
   }, [plans]);
 
   const GetPlacePhoto = async () => {
-    const query = plans?.placeName;
+    const query = plans?.placeName || plans?.PlaceName;
     const result = await GetPlaceDetails(query).then((resp) => {
       // console.log(resp.places[0].photos[3].name);
       const PhotoUrl = PHOTO_REF_URL.replace(
@@ -24,8 +24,8 @@ const PlaceCardItem = ({ plans }) => {
   return (
     <Link
       to={
-        "https://www.google.com/maps/search/?api=1&query=" + plans.placeName ||
-        plans.PlaceName
+        "https://www.google.com/maps/search/?api=1&query=" + plans?.PlaceName ||
+        plans?.PlaceName
       }
       target="_blank"
     >
@@ -33,12 +33,15 @@ const PlaceCardItem = ({ plans }) => {
         <img src={photoUrl} className="w-[100px] h-[100px] rounded-xl" />
         <div>
           <h2 className="font-bold text-lg ">
-            {plans.placeName || plans.PlaceName}
+            {plans.placeDetails || plans.PlaceDetails}
           </h2>
           <p className="text-sm text-gray-500">
             {plans.placeDetails || plans.PlaceDetails}
           </p>
-          <h2 className="mt-2">🕚 {plans.timeTravel || plans.TimeTravel}</h2>
+          <h2 className="mt-2">
+            🕚 {plans.timeTravel || plans.TimeTravel || plans.Time}
+          </h2>
+          <h2 className="mt-2">Travel Time: {plans.TravelTime}</h2>
         </div>
       </div>
     </Link>

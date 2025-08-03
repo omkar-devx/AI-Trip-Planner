@@ -65,7 +65,7 @@ const CreateTrip = () => {
       .replace("{totalDays}", formdata?.noOfDays);
     try {
       const result = await chatSession.sendMessage(FINAL_PROMPT);
-      console.log(result?.response?.text());
+      // console.log(result?.response?.text());
       setLoading(false);
       saveAItrip(result?.response?.text());
     } catch (error) {
